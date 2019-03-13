@@ -1,0 +1,272 @@
+﻿fourier()
+Prgm
+©fait par Cédric Le Breton
+©ICAM 2008
+
+DelVar n
+
+Local inc,nbrefon,borninf,bornsup,fonctios,frequen,sominte,positio,choimen,rang,taiprty,scrollx,scrolly,keyscro,fonction,zminx,zmaxx,zminy,zmaxy,data,an1,bn1,pos,tios,choimen,an,bn,so1,so,sari,version,xscal,yscal
+
+vertel("save","tios",0,0,159,99)
+
+setMode("Exact/Approx","EXACT")
+setMode("Complex Format","REAL")
+setMode("Angle","RADIAN")
+
+main\vertel("hide","main\vertel",0,0)
+main\vertel("vers","","retr","version",1)
+If version≠"3.00 ß5" Then
+ClrIO
+Pause "Pas la bonne version de vertel. Il faut la version 3 - ß5"
+ClrIO
+EndIf
+
+
+1→inc
+
+[[0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0][0,0,0]]→data
+[[0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0]]→sari
+
+Dialog
+Text "La période est divisée en combien de fonctions"
+Request "n",nbrefon
+EndDlog
+expr(nbrefon)→nbrefon
+
+While incœnbrefon
+Dialog
+Request "Borne inférieure",borninf
+Request "Borne supérieure",bornsup
+Request "La fonction",fonctios
+EndDlog
+
+
+
+expr(borninf)→data[inc,1]
+expr(bornsup)→data[inc,2]
+expr(fonctios)→data[inc,3]
+inc+1→inc
+EndWhile
+
+1/(data[nbrefon,2]-data[1,1])→frequen
+Σ(2*frequen*∫(data[sominte,3]*cos(floor(n)*2*π*frequen*x),x,data[sominte,1],data[sominte,2]),sominte,1,nbrefon)→an
+Σ(2*frequen*∫(data[sominte,3]*sin(floor(n)*2*π*frequen*x),x,data[sominte,1],data[sominte,2]),sominte,1,nbrefon)→bn
+1/(data[nbrefon,2]-data[1,1])*Σ(∫(data[sominte,3],x,data[sominte,1],data[sominte,2]),sominte,1,nbrefon)→so
+
+
+string(bn)→bn1
+string(an)→an1
+string(so)→so1
+
+
+While inString(an1,"floor(n)")≠0
+inString(an1,"floor(n)")→pos
+left(an1,pos-1)&string(n)&right(an1,dim(an1)-pos-7)→an1
+EndWhile
+
+
+
+While inString(bn1,"floor(n)")≠0
+inString(bn1,"floor(n)")→pos
+left(bn1,pos-1)&string(n)&right(bn1,dim(bn1)-pos-7)→bn1
+EndWhile
+
+
+Lbl a
+
+vertel("clrs","","text","FOURIER ANALYSE",10,5,2,"","text","1. An et Bn et Vmoy",5,20,1,"","text","2. Equations harmoniques",5,30,1,"","text","3. Valeur efficace",5,40,1,"","text","4. Taux de distorsion",5,50,1,"","text","5. Reconstruire le signal",5,60,1,"","text","6. An et Bn (TI89 display)",5,70,1,"","text","7. Aide",5,80,1,"","text","8. Exit",5,90,1,"","paus","","retr","choimen",1,"","stxt","                         ")
+
+
+If choimen=56 or choimen=264 Then
+DelVar y1
+­10→xmin
+10→xmax
+­10→ymin
+10→ymax
+DispHome:Output 1,1,"":ClrIO:DispHome:vertel("pict","tios",0,0,1,"","stxt","Fait par CLB - ICAM 2008   ;-)")
+EndIf
+
+
+If choimen=50 Then
+1→inc
+Dialog
+Request "Jusqu'a quel rang",rang
+EndDlog
+expr(rang)→rang
+While inc≤rang
+an*cos(inc*frequen*2*π*x)+bn*sin(inc*frequen*2*π*x)|n=inc→sari[inc,1]
+ClrIO
+Disp "n="&string(inc)
+Disp "Fréqence="&string(inc*frequen*2*π)
+Disp "Equat° de cette harmonique:"
+Pause sari[inc,1]
+inc+1→inc
+EndWhile
+ClrIO
+Goto a
+EndIf
+If choimen=52 Then
+ClrIO
+Disp "Taux de distorsion"
+Disp "harmonique"
+Pause √(Σ(an^2+bn^2,n,2,∞)/(Σ(an^2+bn^2,n,1,1)))
+ClrIO
+Disp "Taux de distorsion"
+Disp "harmonique approximatif"
+Pause approx(√(Σ(an^2+bn^2,n,2,∞)/(Σ(an^2+bn^2,n,1,1))))
+Goto a
+EndIf
+If choimen=51 Then
+ClrIO
+Disp "Valeur efficace du signal"
+Disp "périodique étudié"
+Pause √(so^2+Σ(an^2+bn^2,n,1,∞))
+ClrIO
+Disp "Valeur efficace approx du"
+Disp "signal périodique etudié"
+Pause approx(√(so^2+Σ(an^2+bn^2,n,1,∞)))
+ClrIO
+Goto a
+EndIf
+If choimen=55 Then
+vertel("clrs")
+Dialog
+Title "Fourier               fait par CLB"
+Text "►Les fonctions doivent être fonction de x"
+Text " "
+Text "►Possibilité d'utiliser des parametres, "
+Text "Préciser dans home si le parametre"
+Text "est un entier relatif, naturel, ≠0..."
+Text "sinon utiliser @1,@2..."
+Text ""
+Text "►Pour le 6, considèrer que"
+Text " floor(n) c'est n"
+EndDlog
+Dialog
+Title "Fourier               fait par CLB"
+Text "►Pour des fréquences, rentrer"
+Text " les bornes inf et sup en seconde"
+Text ""
+Text "►Je recommande anti alpha lock de K.Kofler"
+EndDlog
+ClrIO
+Goto a
+EndIf
+If choimen=49 Then
+
+
+{0,0}→keyscro
+1→scrollx
+40→scrolly
+While keyscro[1]≠13
+vertel("clrs","","text","An vaut",40,5,2,"","stxt","touches utiles ←→↑↓ et entrée","","prty",an1,scrollx,scrolly,"","paus","","retr","keyscro")
+If keyscro[1]=338 Then
+scrollx+10→scrollx
+EndIf
+If keyscro[1]=344 Then
+scrollx-10→scrollx
+EndIf
+If keyscro[1]=337 Then
+scrolly+10→scrolly
+EndIf
+If keyscro[1]=340 Then
+scrolly-10→scrolly
+EndIf
+EndWhile
+
+
+{0,0}→keyscro
+1→scrollx
+40→scrolly
+While keyscro[1]≠13
+vertel("clrs","","text","Bn vaut",40,5,2,"","stxt","touches utiles ←→↑↓ et entrée","","prty",bn1,scrollx,scrolly,"","paus","","retr","keyscro")
+If keyscro[1]=338 Then
+scrollx+10→scrollx
+EndIf
+If keyscro[1]=344 Then
+scrollx-10→scrollx
+EndIf
+If keyscro[1]=337 Then
+scrolly+10→scrolly
+EndIf
+If keyscro[1]=340 Then
+scrolly-10→scrolly
+EndIf
+EndWhile
+
+
+
+
+{0,0}→keyscro
+1→scrollx
+40→scrolly
+While keyscro[1]≠13
+vertel("clrs","","text","Valeur moyenne",30,5,2,"","stxt","touches utiles ←→↑↓ et entrée","","prty",so1,scrollx,scrolly,"","paus","","retr","keyscro")
+If keyscro[1]=338 Then
+scrollx+10→scrollx
+EndIf
+If keyscro[1]=344 Then
+scrollx-10→scrollx
+EndIf
+If keyscro[1]=337 Then
+scrolly+10→scrolly
+EndIf
+If keyscro[1]=340 Then
+scrolly-10→scrolly
+EndIf
+EndWhile
+
+Goto a
+EndIf
+
+If choimen=53 Then
+
+Dialog
+Request "Jusqu'a quel rang",rang
+EndDlog
+1→inc
+While inc<expr(rang)
+an*cos(inc*frequen*2*π*x)+bn*sin(inc*frequen*2*π*x)|n=inc→sari[inc,1]
+inc+1→inc
+EndWhile
+
+Dialog
+Title "réglages zoom"
+Request "xmin",zminx
+Request "xmax",zmaxx
+Request "ymin",zminy
+Request "ymax",zmaxy
+Text "le pas sera de 1 pour y et x"
+EndDlog
+expr(zminx)→xmin
+expr(zmaxx)→xmax
+expr(zminy)→ymin
+expr(zmaxy)→ymax
+1→yscal
+1→xscal
+string(so+Σ(sari[nbrefon,1],nbrefon,1,expr(rang)))→fonction
+expr("Define y1(x)="&fonction)
+DelVar y2,y3,y4,y5
+DispHome:Output 1,1,"":ClrIO
+Trace
+Pause 
+Goto a
+EndIf
+If choimen=54 Then
+ClrIO
+Disp "An"
+Pause an
+ClrIO
+Disp "Bn"
+Pause bn
+ClrIO
+Disp "So"
+Pause so
+Goto a
+EndIf
+If choimen≠264 and choimen≠50 and choimen≠56 and choimen≠52 and choimen≠51 and choimen≠55 and choimen≠49 and choimen≠53 and choimen≠54 Then
+Goto a
+EndIf
+
+
+EndPrgm
