@@ -7,7 +7,9 @@ The main advantage of this programm is that you can share the period into as man
 For example, it would be possible to define such a signal :
 
 For x ∈ [0;1[, f(x) = x
+
 For x ∈ ]1;2[, f(x) = -2x+4
+
 For x ∈ ]2;3[, f(x) = x-3
 
 In this example the period is shared into 3 functions. But you can imagine more complex signals.
